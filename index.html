@@ -2,10 +2,11 @@
 <html ng-app="app">
 <head>
     <title>Обрезка картинки на angular</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body ng-controller="baseController">
-    <div ng-crop-block>
-        <img src="img/12.jpg" width="600" alt="" />
+    <div ng-init-crop sizes="{width: 600, height: 480}">
+        <img src="img/12.jpg" width="600" height="480" alt="" />
     </div>
     <footer>
         <script src="lib/angular/angular.min.js"></script>
