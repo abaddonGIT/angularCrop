@@ -149,19 +149,6 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
                     resize(e);
                     $croping.scopeUpdate();
                 });
-                /*
-                elem.on("mousemove", function (e) {
-                //ширина
-                var newLeft = e.clientX - clickX;
-                //реверс
-                if (newLeft < (-1 * loc.width)) {
-                scope.area.width = (-1) * (loc.width + newLeft);
-                scope.area.left = loc.left - scope.area.width;
-                } else {
-                scope.area.width = loc.width + newLeft;
-                }
-                $croping.scopeUpdate();
-                });*/
                 e.preventDefault();
                 e.stopPropagation();
             };
