@@ -1,3 +1,7 @@
+#crop {
+    margin: 0 auto;
+}
+
 .cropBlock {
     position: relative;
 }
@@ -7,21 +11,24 @@
     left: 0;
     background-color: #fff;
     opacity: 0.2;
-    z-index: 3;
+    z-index: 1020;
+    cursor: move;
+    border: 1px solid red;
 }
 
 .cropImg {
     position: relative;
-    z-index: 1;
+    z-index: 1000;
 }
 
 .selectWrap {
-    width: 100%;
-    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 2;
+    z-index: 1010;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0);
 }
 
 .areaTop,
@@ -29,33 +36,36 @@
 .areaBottom,
 .areaLeft {
     position: absolute;
-    background-color: red;
 }
 
 .areaTop {
-    top: -1px;
+    top: -3px;
     left: 0;
-    height: 1px;
+    height: 7px;
     width: 100%;
+    cursor: s-resize;
 }
 
 .areaRight {
     top: 0px;
-    right: -1px;
-    width: 1px;
+    right: -3px;
+    width: 7px;
     height: 100%;
+    cursor: e-resize;
 }
 
 .areaBottom {
-    bottom: -1px;
-    height: 1px;
+    bottom: -3px;
+    height: 7px;
     left: 0;
     width: 100%;
+    cursor: s-resize;
 }
 
 .areaLeft {
     top: 0px;
-    left: 0;
-    width: 1px;
+    left: -3px;
+    width: 7px;
     height: 100%;
+    cursor: e-resize;
 }
