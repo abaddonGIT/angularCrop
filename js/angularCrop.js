@@ -1,24 +1,31 @@
 /**
-* Created by abaddon on 20.06.14.
-*/
+ * Created by abaddon on 20.06.14.
+ */
 var crop = angular.module("angularCrop", []);
 crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $document) {
     return {
-        scope: {},
+        scope: {
+            'result': '='
+        },
         transclude: true,
         template: "<div class='cropBlock'>" +
             "<div ng-transclude class='cropImg'></div>" +
             "<div class='selectWrap' ng-mousedown='startNewArea($event)' ng-mouseup='stopMove($event)'>" +
             "</div>" +
-            "<div class='selectCropArea' ng-mousedown='areaMove($event)' ng-mouseup='areaMoveStop($event)' ng-style='{width: area.width + \"px\", height: area.height + \"px\", top: area.top + \"px\", left: area.left + \"px\"}'>" +
+            "<div class='selectCropArea' ng-show='show' ng-mousedown='areaMove($event)' ng-mouseup='areaMoveStop($event)' ng-style='{width: area.width + \"px\", height: area.height + \"px\", top: area.top + \"px\", left: area.left + \"px\"}'>" +
             "<div class='areaTop' ng-mousedown='areaResize($event, \"top\")' ng-mouseup='stopMove($event)'></div>" +
             "<div class='areaRight' ng-mousedown='areaResize($event,\"right\")' ng-mouseup='stopMove($event)'></div>" +
             "<div class='areaBottom' ng-mousedown='areaResize($event, \"bottom\")' ng-mouseup='stopMove($event)'></div>" +
             "<div class='areaLeft' ng-mousedown='areaResize($event, \"left\")' ng-mouseup='stopMove($event)'></div>" +
+            "<div class='areaCubTl' ng-mousedown='areaResize($event, \"tl\")' ng-mouseup='stopMove($event)'></div>" +
+            "<div class='areaCubTr' ng-mousedown='areaResize($event, \"tr\")' ng-mouseup='stopMove($event)'></div>" +
+            "<div class='areaCubBl' ng-mousedown='areaResize($event, \"bl\")' ng-mouseup='stopMove($event)'></div>" +
+            "<div class='areaCubBr' ng-mousedown='areaResize($event, \"br\")' ng-mouseup='stopMove($event)'></div>" +
             "</div>" +
             "</div>",
         link: function (scope, elem, attr) {
-            var blockSize = scope.$eval(attr.sizes), top, bot, area, moveArea, areaSize;
+            var blockSize = scope.$eval(attr.sizes), options = scope.$eval(attr.ngInitCrop), top, bot, area, moveArea, areaSize;
+
             //дефолтовые размеры области выделения
             scope.area = {
                 width: 0,
@@ -47,6 +54,7 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
                 };
                 //Просчет координатов мыши при перемещении
                 elem.on("mousemove", function (e) {
+                    scope.show = true;
                     areaResize(e, top);
                 });
             };
@@ -75,75 +83,84 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
             //Изменение размера блока
             scope.areaResize = function (e, side) {
                 //Берем координаты мышки
-                var loc = angular.extend({}, scope.area), resize = function (e) { };
+                var loc = angular.extend({}, scope.area), clickX = e.clientX, clickY = e.clientY, one, two, name,
+                //право,низ
+                    rb = function (e, one, two, name, click) {
+                        var difference = e[name] - click, newWidth = loc[one] + difference;
+                        //реверс
+                        if (difference < (-1 * loc[one])) {
+                            if ((-1 * newWidth) < loc[two]) {
+                                scope.area[one] = (-1) * newWidth;
+                                scope.area[two] = loc[two] - scope.area[one];
+                            }
+                        } else {
+                            if (loc[two] + newWidth < blockSize[one]) {
+                                scope.area[one] = newWidth;
+                            }
+                        }
+                    },
+                //Лево, вверх
+                    lt = function (e, one, two, name, click) {
+                        var difference = e[name] - click, newWidth = loc[one] - difference;
+                        if (difference > loc[one]) {
+                            if ((loc[two] + loc[one] + (-1 * newWidth)) < blockSize[one]) {
+                                scope.area[one] = (-1) * newWidth;
+                            }
+                        } else {
+                            if ((-1 * difference) < loc[two]) {
+                                scope.area[one] = newWidth;
+                                scope.area[two] = loc[two] + difference;
+                            }
+                        }
+                    };
+                //Как пересчитывать
                 switch (side) {
                     case 'right':
-                        var clickX = e.clientX;
                         resize = function (e) {
-                            var difference = e.clientX - clickX, newWidth = loc.width + difference;
-                            //реверс
-                            if (difference < (-1 * loc.width)) {
-                                if ((-1 * newWidth) < loc.left) {
-                                    scope.area.width = (-1) * newWidth;
-                                    scope.area.left = loc.left - scope.area.width;
-                                }
-                            } else {
-                                if (loc.left + newWidth < blockSize.width) {
-                                    scope.area.width = newWidth;
-                                }
-                            }
-                        };
-                        break;
-                    case 'left':
-                        var clickX = e.clientX;
-                        resize = function (e) {
-                            var difference = e.clientX - clickX, newWidth = loc.width - difference;
-                            if (difference > loc.width) {
-                                if ((loc.left + loc.width + (-1 * newWidth)) < blockSize.width) {
-                                    scope.area.width = (-1) * newWidth;
-                                }
-                            } else {
-                                if ((-1 * difference) < loc.left) {
-                                    scope.area.width = newWidth;
-                                    scope.area.left = loc.left + difference;
-                                }
-                            }
-                        };
-                        break;
-                    case 'top':
-                        var clickY = e.clientY;
-                        resize = function (e) {
-                            var difference = e.clientY - clickY, newHeight = loc.height - difference;
-                            if (difference > loc.height) {
-                                if (loc.top + loc.height + (-1 * newHeight) < blockSize.height) {
-                                    scope.area.height = (-1) * newHeight;
-                                }
-                            } else {
-                                if ((-1 * difference) < loc.top) {
-                                    scope.area.height = newHeight;
-                                    scope.area.top = loc.top - (-1 * difference);
-                                }
-                            }
+                            rb(e, 'width', 'left', 'clientX', clickX);
                         };
                         break;
                     case 'bottom':
-                        var clickY = e.clientY;
                         resize = function (e) {
-                            var difference = e.clientY - clickY, newHeight = loc.height + difference;
-                            if (loc.height < (-1 * difference)) {
-                                if ((-1 * newHeight) < loc.top) {
-                                    scope.area.height = (-1) * newHeight;
-                                    scope.area.top = loc.top - scope.area.height;
-                                }
-                            } else {
-                                if ((loc.top + newHeight) < blockSize.height) {
-                                    scope.area.height = newHeight;
-                                }
-                            }
+                            rb(e, 'height', 'top', 'clientY', clickY);
                         };
                         break;
-                };
-
+                    case 'left':
+                        resize = function (e) {
+                            lt(e, 'width', 'left', 'clientX', clickX);
+                        };
+                        break;
+                    case 'top':
+                        resize = function (e) {
+                            lt(e, 'height', 'top', 'clientY', clickY);
+                        };
+                        break;
+                    case 'tr':
+                        resize = function (e) {
+                            rb(e, 'width', 'left', 'clientX', clickX);
+                            lt(e, 'height', 'top', 'clientY', clickY);
+                        };
+                        break;
+                    case 'tl':
+                        resize = function (e) {
+                            lt(e, 'width', 'left', 'clientX', clickX);
+                            lt(e, 'height', 'top', 'clientY', clickY);
+                        };
+                        break;
+                    case 'br':
+                        resize = function (e) {
+                            rb(e, 'height', 'top', 'clientY', clickY);
+                            rb(e, 'width', 'left', 'clientX', clickX);
+                        };
+                        break;
+                    case 'bl':
+                        resize = function (e) {
+                            rb(e, 'height', 'top', 'clientY', clickY);
+                            lt(e, 'width', 'left', 'clientX', clickX);
+                        };
+                        break;
+                }
+                ;
                 //Просчет координатов мыши при перемещении
                 elem.on("mousemove", function (e) {
                     resize(e);
@@ -155,11 +172,27 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
             //Конец выделения области
             scope.stopMove = function (e) {
                 elem.off("mousemove");
+                //Записываем итоговые координаты
+                finallyCords();
                 e.preventDefault();
                 e.stopPropagation();
             };
             scope.areaMoveStop = function () {
+                finallyCords();
                 area.off("mousemove");
+            };
+
+            var finallyCords = function () {
+                var cords = {
+                    x1: scope.area.left,
+                    y1: scope.area.top,
+                    x2: scope.area.left + scope.area.width,
+                    y2: scope.area.top + scope.area.height,
+                    width: scope.area.width,
+                    height: scope.area.height
+                };
+
+                scope.result = cords;
             };
         }
     }

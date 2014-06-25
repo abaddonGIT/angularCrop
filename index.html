@@ -2,16 +2,50 @@
 <html ng-app="app">
 <head>
     <title>Обрезка картинки на angular</title>
-    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <style>
+        #wrap {
+            width: 900px;
+            margin: 0 auto;
+        }
+
+        #crop {
+            float: left;
+        }
+
+        #result {
+            float: left;
+            width: 250px;
+            background-color: #ccc;
+            min-height: 480px;
+        }
+
+        #result input {
+            height: 27px;
+            display: block;
+            width: 90%;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body ng-controller="baseController">
-    <div ng-init-crop sizes="{width: 600, height: 480}" id="crop">
-        <img src="img/12.jpg" width="600" height="480" alt="" />
+<div id="wrap">
+    <div ng-init-crop="{scale: true}" sizes="{width: 600, height: 480}" id="crop" result="cords">
+        <img src="img/12.jpg" ng-crop-img width="600" height="480" alt=""/>
     </div>
-    <footer>
-        <script src="lib/angular/angular.min.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/angularCrop.js"></script>
-    </footer>
+    <div id="result">
+        <input type="text" value="{{cords.x1}}" />
+        <input type="text" value="{{cords.y1}}" />
+        <input type="text" value="{{cords.x2}}" />
+        <input type="text" value="{{cords.y2}}" />
+        <input type="text" value="{{cords.width}}" />
+        <input type="text" value="{{cords.height}}" />
+    </div>
+</div>
+<footer>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/angularCrop.js"></script>
+</footer>
 </body>
 </html>
