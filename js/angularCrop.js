@@ -1,13 +1,74 @@
 /**
- * Created by abaddon on 20.06.14.
- */
+* Created by abaddon on 20.06.14.
+*/
 var crop = angular.module("angularCrop", []);
-crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $document) {
+crop.directive('ngInitCrop', ["$document", "$rootScope", function ($document, $rootScope) {
     return {
         scope: {
             'result': '='
         },
         transclude: true,
+        controller: function ($scope, $element) {
+            var api = {
+                getElementSize: function (lt, rb) {
+                    var width = (rb.x - lt.x) - 10, height = (rb.y - lt.y) - 10, top = lt.y, left = lt.x;
+                    if (width < 0) {
+                        width = width * (-1) - 25;
+                        left = left - width;
+                    }
+                    if (height < 0) {
+                        height = height * (-1) - 25;
+                        top = top - height;
+                    }
+                    return {
+                        width: width,
+                        height: height,
+                        top: top,
+                        left: left
+                    };
+                },
+                getCords: function (e) {
+                    var elLeft = e.offsetX == undefined ? e.layerX : e.offsetX,
+                        elTop = e.offsetY == undefined ? e.layerY : e.offsetY;
+
+                    return {
+                        top: elTop,
+                        left: elLeft
+                    };
+                },
+                scopeUpdate: function () {
+                    $rootScope.$$phase || $rootScope.$digest();
+                },
+                rb: function (e, one, two, name, click, loc) {
+                    var difference = e[name] - click, newWidth = loc[one] + difference;
+                    //реверс
+                    if (difference < (-1 * loc[one])) {
+                        if ((-1 * newWidth) < loc[two]) {
+                            $scope.area[one] = (-1) * newWidth;
+                            $scope.area[two] = loc[two] - $scope.area[one];
+                        }
+                    } else {
+                        if (loc[two] + newWidth < $scope.blockSize[one]) {
+                            $scope.area[one] = newWidth;
+                        }
+                    }
+                },
+                lt: function (e, one, two, name, click, loc) {
+                    var difference = e[name] - click, newWidth = loc[one] - difference;
+                    if (difference > loc[one]) {
+                        if ((loc[two] + loc[one] + (-1 * newWidth)) < $scope.blockSize[one]) {
+                            $scope.area[one] = (-1) * newWidth;
+                        }
+                    } else {
+                        if ((-1 * difference) < loc[two]) {
+                            $scope.area[one] = newWidth;
+                            $scope.area[two] = loc[two] + difference;
+                        }
+                    }
+                }
+            };
+            angular.extend(this, api);
+        },
         template: "<div class='cropBlock'>" +
             "<div ng-transclude class='cropImg'></div>" +
             "<div class='selectWrap' ng-mousedown='startNewArea($event)' ng-mouseup='stopMove($event)'>" +
@@ -23,9 +84,9 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
             "<div class='areaCubBr' ng-mousedown='areaResize($event, \"br\")' ng-mouseup='stopMove($event)'></div>" +
             "</div>" +
             "</div>",
-        link: function (scope, elem, attr) {
+        link: function (scope, elem, attr, api) {
             var blockSize = scope.$eval(attr.sizes), options = scope.$eval(attr.ngInitCrop), top, bot, area, moveArea, areaSize;
-
+            scope.blockSize = blockSize;
             //дефолтовые размеры области выделения
             scope.area = {
                 width: 0,
@@ -35,19 +96,19 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
             };
             //Перересовка блока выделения
             var areaResize = function (e, top) {
-                var cords = $croping.getCords(e);
+                var cords = api.getCords(e);
                 bot = {
                     x: cords.left,
                     y: cords.top
                 };
-                scope.area = $croping.getElementSize(top, bot);
-                $croping.scopeUpdate();
+                scope.area = api.getElementSize(top, bot);
+                api.scopeUpdate();
             };
             //Размер области
             elem[0].style.cssText += "width: " + blockSize.width + 'px; height: ' + blockSize.height + 'px;';
             //Новая область выделения
             scope.startNewArea = function (e) {
-                var cords = $croping.getCords(e);
+                var cords = api.getCords(e);
                 top = {
                     x: cords.left,
                     y: cords.top
@@ -77,86 +138,57 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
                     if (newTop > 0 && (newTop + scope.area.height < blockSize.height)) {
                         scope.area.top = newTop;
                     }
-                    $croping.scopeUpdate();
+                    api.scopeUpdate();
                 });
             };
             //Изменение размера блока
             scope.areaResize = function (e, side) {
                 //Берем координаты мышки
-                var loc = angular.extend({}, scope.area), clickX = e.clientX, clickY = e.clientY, one, two, name,
-                //право,низ
-                    rb = function (e, one, two, name, click) {
-                        var difference = e[name] - click, newWidth = loc[one] + difference;
-                        //реверс
-                        if (difference < (-1 * loc[one])) {
-                            if ((-1 * newWidth) < loc[two]) {
-                                scope.area[one] = (-1) * newWidth;
-                                scope.area[two] = loc[two] - scope.area[one];
-                            }
-                        } else {
-                            if (loc[two] + newWidth < blockSize[one]) {
-                                scope.area[one] = newWidth;
-                            }
-                        }
-                    },
-                //Лево, вверх
-                    lt = function (e, one, two, name, click) {
-                        var difference = e[name] - click, newWidth = loc[one] - difference;
-                        if (difference > loc[one]) {
-                            if ((loc[two] + loc[one] + (-1 * newWidth)) < blockSize[one]) {
-                                scope.area[one] = (-1) * newWidth;
-                            }
-                        } else {
-                            if ((-1 * difference) < loc[two]) {
-                                scope.area[one] = newWidth;
-                                scope.area[two] = loc[two] + difference;
-                            }
-                        }
-                    };
+                var loc = angular.extend({}, scope.area), clickX = e.clientX, clickY = e.clientY;
                 //Как пересчитывать
                 switch (side) {
                     case 'right':
                         resize = function (e) {
-                            rb(e, 'width', 'left', 'clientX', clickX);
+                            api.rb(e, 'width', 'left', 'clientX', clickX, loc);
                         };
                         break;
                     case 'bottom':
                         resize = function (e) {
-                            rb(e, 'height', 'top', 'clientY', clickY);
+                            api.rb(e, 'height', 'top', 'clientY', clickY, loc);
                         };
                         break;
                     case 'left':
                         resize = function (e) {
-                            lt(e, 'width', 'left', 'clientX', clickX);
+                            api.lt(e, 'width', 'left', 'clientX', clickX, loc);
                         };
                         break;
                     case 'top':
                         resize = function (e) {
-                            lt(e, 'height', 'top', 'clientY', clickY);
+                            api.lt(e, 'height', 'top', 'clientY', clickY, loc);
                         };
                         break;
                     case 'tr':
                         resize = function (e) {
-                            rb(e, 'width', 'left', 'clientX', clickX);
-                            lt(e, 'height', 'top', 'clientY', clickY);
+                            api.rb(e, 'width', 'left', 'clientX', clickX, loc);
+                            api.lt(e, 'height', 'top', 'clientY', clickY, loc);
                         };
                         break;
                     case 'tl':
                         resize = function (e) {
-                            lt(e, 'width', 'left', 'clientX', clickX);
-                            lt(e, 'height', 'top', 'clientY', clickY);
+                            api.lt(e, 'width', 'left', 'clientX', clickX, loc);
+                            api.lt(e, 'height', 'top', 'clientY', clickY, loc);
                         };
                         break;
                     case 'br':
                         resize = function (e) {
-                            rb(e, 'height', 'top', 'clientY', clickY);
-                            rb(e, 'width', 'left', 'clientX', clickX);
+                            api.rb(e, 'height', 'top', 'clientY', clickY, loc);
+                            api.rb(e, 'width', 'left', 'clientX', clickX, loc);
                         };
                         break;
                     case 'bl':
                         resize = function (e) {
-                            rb(e, 'height', 'top', 'clientY', clickY);
-                            lt(e, 'width', 'left', 'clientX', clickX);
+                            api.rb(e, 'height', 'top', 'clientY', clickY, loc);
+                            api.lt(e, 'width', 'left', 'clientX', clickX, loc);
                         };
                         break;
                 }
@@ -164,7 +196,7 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
                 //Просчет координатов мыши при перемещении
                 elem.on("mousemove", function (e) {
                     resize(e);
-                    $croping.scopeUpdate();
+                    api.scopeUpdate();
                 });
                 e.preventDefault();
                 e.stopPropagation();
@@ -196,47 +228,4 @@ crop.directive('ngInitCrop', ["$croping", "$document", function ($croping, $docu
             };
         }
     }
-} ]);
-
-crop.factory("$croping", ['$rootScope', function ($rootScope) {
-    var getElementSize = function (lt, rb) {
-        var width = (rb.x - lt.x) - 10, height = (rb.y - lt.y) - 10, top = lt.y, left = lt.x;
-
-        if (width < 0) {
-            width = width * (-1) - 25;
-            left = left - width;
-        }
-
-        if (height < 0) {
-            height = height * (-1) - 25;
-            top = top - height;
-        }
-
-        return {
-            width: width,
-            height: height,
-            top: top,
-            left: left
-        };
-    };
-
-    var getCords = function (e) {
-        var elLeft = e.offsetX == undefined ? e.layerX : e.offsetX,
-            elTop = e.offsetY == undefined ? e.layerY : e.offsetY;
-
-        return {
-            top: elTop,
-            left: elLeft
-        };
-    };
-
-    var scopeUpdate = function () {
-        $rootScope.$$phase || $rootScope.$digest();
-    };
-
-    return {
-        getElementSize: getElementSize,
-        scopeUpdate: scopeUpdate,
-        getCords: getCords
-    };
 } ]);
