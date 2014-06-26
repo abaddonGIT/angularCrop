@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a7dcb45c-32d5-4db0-9903-48a316612b5b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="DELETED" beforePath="D:\WebServers\home\resize1.ru\www\.idea\encodings.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebServers\home\resize1.ru\www\.idea\misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebServers\home\resize1.ru\www\.idea\modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebServers\home\resize1.ru\www\.idea\scopes\scope_settings.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebServers\home\resize1.ru\www\.idea\vcs.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebServers\home\resize1.ru\www\.idea\workspace.xml" afterPath="" />
     </list>
     <ignored path="www.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,7 +42,7 @@
       <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="51" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.5875139" vertical-offset="0" max-vertical-offset="897">
+            <state line="33" column="5" selection-start="1233" selection-end="1233" vertical-scroll-proportion="0.62541807" vertical-offset="0" max-vertical-offset="897">
               <folding />
             </state>
           </provider>
@@ -438,7 +443,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="51" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.5875139" vertical-offset="0" max-vertical-offset="897">
+        <state line="33" column="5" selection-start="1233" selection-end="1233" vertical-scroll-proportion="0.62541807" vertical-offset="0" max-vertical-offset="897">
           <folding />
         </state>
       </provider>
