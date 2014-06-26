@@ -30,8 +30,8 @@
 </head>
 <body ng-controller="baseController">
 <div id="wrap">
-    <div ng-init-crop="{scale: true}" sizes="{width: 600, height: 480}" id="crop" result="cords">
-        <img src="img/12.jpg" ng-crop-img width="600" height="480" alt=""/>
+    <div ng-init-crop sizes="{width: 600, height: 480}" id="crop" result="cords">
+        <img src="img/12.jpg" width="600" height="480" alt=""/>
     </div>
     <div id="result">
         <input type="text" value="{{cords.x1}}" />

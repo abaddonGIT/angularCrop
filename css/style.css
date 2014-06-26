@@ -28,14 +28,7 @@
     background: rgba(0, 0, 0, 0);
 }
 
-.areaTop,
-.areaRight,
-.areaBottom,
-.areaLeft,
-.areaCubTl,
-.areaCubTr,
-.areaCubBl,
-.areaCubBr {
+[class*='area'] {
     position: absolute;
 }
 
