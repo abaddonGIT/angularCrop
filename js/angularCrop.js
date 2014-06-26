@@ -85,7 +85,7 @@ crop.directive('ngInitCrop', ["$document", "$rootScope", function ($document, $r
             "</div>" +
             "</div>",
         link: function (scope, elem, attr, api) {
-            var blockSize = scope.$eval(attr.sizes), top, bot, area, moveArea, areaSize;
+            var blockSize = scope.$eval(attr.sizes) || {width: elem[0].clientWidth, height: elem[0].clientHeight}, top, bot, area, moveArea, areaSize;
             scope.blockSize = blockSize;
             //дефолтовые размеры области выделения
             scope.area = {
