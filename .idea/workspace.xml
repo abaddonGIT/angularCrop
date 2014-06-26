@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a7dcb45c-32d5-4db0-9903-48a316612b5b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/angularCrop.js" afterPath="$PROJECT_DIR$/js/angularCrop.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="www.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,10 +34,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="9" selection-start="1189" selection-end="1189" vertical-scroll-proportion="-21.08" vertical-offset="0" max-vertical-offset="646">
+            <state line="31" column="51" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.5875139" vertical-offset="0" max-vertical-offset="897">
               <folding />
             </state>
           </provider>
@@ -48,10 +46,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="angularCrop.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="angularCrop.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/angularCrop.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="94" column="23" selection-start="4821" selection-end="4821" vertical-scroll-proportion="0.41144115" vertical-offset="1224" max-vertical-offset="4012">
+            <state line="93" column="23" selection-start="4797" selection-end="4797" vertical-scroll-proportion="0.0" vertical-offset="1224" max-vertical-offset="4012">
               <folding />
             </state>
           </provider>
@@ -431,21 +429,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/js/angularCrop.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="93" column="23" selection-start="4797" selection-end="4797" vertical-scroll-proportion="0.0" vertical-offset="1224" max-vertical-offset="4012">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="9" selection-start="1189" selection-end="1189" vertical-scroll-proportion="-21.08" vertical-offset="0" max-vertical-offset="646">
+        <state line="31" column="51" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.5875139" vertical-offset="0" max-vertical-offset="897">
           <folding />
         </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/angularCrop.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="23" selection-start="4821" selection-end="4821" vertical-scroll-proportion="0.41144115" vertical-offset="1224" max-vertical-offset="4012">
-          <folding />
-        </state>
       </provider>
     </entry>
   </component>

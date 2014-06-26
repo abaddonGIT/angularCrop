@@ -6,6 +6,7 @@ angularCrop
 <h2>Подключение</h2>
 <ol>
     <li>
+        <h3>Подключаем:</h3>
         <pre>var app = angular.module('app', ['angularCrop']);</pre>
     </li>
     <li>
@@ -27,7 +28,7 @@ angularCrop
         Аттрибут <b>sizes</b> принимает размеры рабочей области. В случаи если аттрибут не передан, директива сама попытается узнать размеры блока.
     </li>
     <li>
-        Поддержка:
+        <h3>Поддержка:</h3>
         IE9 и выше, Chrome, Opera, Firefox, Safary;
     </li>
 </ol>
