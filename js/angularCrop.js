@@ -12,6 +12,7 @@
                 },
                 transclude: true,
                 controller: function ($scope, $element) {
+                    var stop = false;
                     var api = {
                         getElementSize: function (lt, rb) {
                             var width = (rb.x - lt.x) - 10, height = (rb.y - lt.y) - 10, top = lt.y, left = lt.x;
@@ -30,46 +31,52 @@
                                 left: left
                             };
                         },
-                        getCords: function (e) {
-                            var elLeft = e.offsetX == undefined ? e.layerX : e.offsetX,
-                                elTop = e.offsetY == undefined ? e.layerY : e.offsetY;
-
-                            return {
-                                top: elTop,
-                                left: elLeft
-                            };
-                        },
                         scopeUpdate: function () {
                             $rootScope.$$phase || $rootScope.$digest();
                         },
-                        rb: function (e, one, two, name, click, loc) {
-                            var difference = e[name] - click, newWidth = loc[one] + difference;
-                            if (newWidth >= $scope.minSizes.width) {
-                                if (difference < (-1 * loc[one])) {
-                                    if ((-1 * newWidth) < loc[two]) {
-                                        $scope.area[one] = (-1) * newWidth;
-                                        $scope.area[two] = loc[two] - $scope.area[one];
-                                    }
-                                } else {
-                                    if (loc[two] + newWidth < $scope.blockSize[one]) {
-                                        $scope.area[one] = newWidth;
-                                    }
-                                }
+                        trueResize: function (e, loc, clickX, clickY, mode) {
+                            var differentX = e.clientX - clickX, differentY = $scope.area.ratio ? differentX : e.clientY - clickY, left = loc['left'], top = loc['top'], newWidth = loc['width'], newHeight = loc['height'];
+                            switch (mode) {
+                                case 'tr'://правый верхний угол
+                                    newWidth = loc['width'] + differentX;
+                                    newHeight = loc['height'] + (differentY === differentX ? differentY : (-1) * differentY);
+                                    top = loc['top'] + (differentY === differentX ? (-1) * differentY : differentY);
+                                    break;
+                                case 'br'://правый нижний угол
+                                    newWidth = loc['width'] + differentX;
+                                    newHeight = loc['height'] + differentY;
+                                    break;
+                                case 'tl'://левый верхний угол
+                                    newWidth = loc['width'] - differentX;
+                                    newHeight = loc['height'] - differentY;
+                                    left = loc['left'] + differentX;
+                                    top = loc['top'] + differentY;
+                                    break;
+                                case 'bl'://левый нижни  угол
+                                    left = loc['left'] + differentX;
+                                    newWidth = loc['width'] - differentX;
+                                    newHeight = loc['height'] + (differentY === differentX ? (-1) * differentY : differentY);
+                                    break;
+                                case 'right':
+                                    newWidth = loc['width'] + differentX;
+                                    break;
+                                case 'left':
+                                    newWidth = loc['width'] - differentX;
+                                    left = loc['left'] + differentX;
+                                    break;
+                                case 'top':
+                                    newHeight = loc['height'] - differentY;
+                                    top = loc['top'] + differentY;
+                                    break;
+                                case 'bottom':
+                                    newHeight = loc['height'] + differentY;
+                                    break;
                             }
-                        },
-                        lt: function (e, one, two, name, click, loc) {
-                            var difference = e[name] - click, newWidth = loc[one] - difference;
-                            if (newWidth >= $scope.minSizes.width) {
-                                if (difference > loc[one]) {
-                                    if ((loc[two] + loc[one] + (-1 * newWidth)) < $scope.blockSize[one]) {
-                                        $scope.area[one] = (-1) * newWidth;
-                                    }
-                                } else {
-                                    if ((-1 * difference) < loc[two]) {
-                                        $scope.area[one] = newWidth;
-                                        $scope.area[two] = loc[two] + difference;
-                                    }
-                                }
+                            if (newHeight >= $scope.minSizes.height && newWidth >= $scope.minSizes.width && top > 0 && left > 0 && (top + newHeight) < $scope.blockSize['height'] && (left + newWidth) < $scope.blockSize['width']) {
+                                $scope.area.height = newHeight;
+                                $scope.area.width = newWidth;
+                                $scope.area.left = left;
+                                $scope.area.top = top;
                             }
                         }
                     };
@@ -98,7 +105,8 @@
                         width: 0,
                         height: 0,
                         top: 0,
-                        left: 0
+                        left: 0,
+                        ratio: false
                     };
                     if (point.width < minSizes.width) {
                         point.width = minSizes.width;
@@ -151,56 +159,28 @@
                     };
                     //Изменение размера блока
                     scope.areaResize = function (e, side) {
-                        var loc = an.extend({}, scope.area), clickX = e.clientX, clickY = e.clientY;//Берем координаты мышки
-                        switch (side) {//Как пересчитывать
-                            case 'right':
-                                resize = function (e) {
-                                    api.rb(e, 'width', 'left', 'clientX', clickX, loc);
-                                };
-                                break;
-                            case 'bottom':
-                                resize = function (e) {
-                                    api.rb(e, 'height', 'top', 'clientY', clickY, loc);
-                                };
-                                break;
-                            case 'left':
-                                resize = function (e) {
-                                    api.lt(e, 'width', 'left', 'clientX', clickX, loc);
-                                };
-                                break;
-                            case 'top':
-                                resize = function (e) {
-                                    api.lt(e, 'height', 'top', 'clientY', clickY, loc);
-                                };
-                                break;
-                            case 'tr':
-                                resize = function (e) {
-                                    api.rb(e, 'width', 'left', 'clientX', clickX, loc);
-                                    api.lt(e, 'height', 'top', 'clientY', clickY, loc);
-                                };
-                                break;
-                            case 'tl':
-                                resize = function (e) {
-                                    api.lt(e, 'width', 'left', 'clientX', clickX, loc);
-                                    api.lt(e, 'height', 'top', 'clientY', clickY, loc);
-                                };
-                                break;
-                            case 'br':
-                                resize = function (e) {
-                                    api.rb(e, 'height', 'top', 'clientY', clickY, loc);
-                                    api.rb(e, 'width', 'left', 'clientX', clickX, loc);
-                                };
-                                break;
-                            case 'bl':
-                                resize = function (e) {
-                                    api.rb(e, 'height', 'top', 'clientY', clickY, loc);
-                                    api.lt(e, 'width', 'left', 'clientX', clickX, loc);
-                                };
-                                break;
+                        var loc = an.extend({}, scope.area), resize = function () {
+                        }, clickX = e.clientX, clickY = e.clientY;//Берем координаты мышки
+                        if (scope.area.ratio) {
+                            switch (side) {
+                                case 'tr':
+                                case 'tl':
+                                case 'br':
+                                case 'bl':
+                                    resize = function (e) {
+                                        api.trueResize(e, loc, clickX, clickY, side);
+                                    };
+                                    break;
+                            }
+                        } else {
+                            resize = function (e) {
+                                api.trueResize(e, loc, clickX, clickY, side);
+                            };
                         }
                         //Просчет координатов мыши при перемещении
                         elem.on("mousemove", function (e) {
                             resize(e);
+                            finallyCords();
                             api.scopeUpdate();
                         });
                         elemsQueue[side] = an.element(e.target);
