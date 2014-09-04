@@ -75,7 +75,7 @@
                     };
                     an.extend(this, api);
                 },
-                template: "<div class='cropBlock' ng-mouseup='stop()'>" +
+                template: "<div class='cropBlock' ng-mouseup='stopMove($event)' ng-mouseleave='stopMove($event); areaMoveStop($event)'>" +
                     "<div ng-transclude class='cropImg'></div>" +
                     "<div class='selectWrap'>" +
                     "</div>" +
@@ -145,6 +145,8 @@
                                 scope.area.top = newTop;
                             }
                             api.scopeUpdate();
+                            e.preventDefault();
+                            e.stopPropagation();
                         });
                     };
                     //Изменение размера блока
@@ -219,10 +221,6 @@
                             area.off("mousemove");
                         }
                     };
-                    scope.stop = function () {
-                        console.log(elemsQueue);
-                    };
-
                     var finallyCords = function () {
                         var cords = {
                             x1: scope.area.left,
@@ -236,6 +234,6 @@
                         scope.result = cords;
                     };
                 }
-            }
+            };
         } ]);
 }(window, document, angular));
