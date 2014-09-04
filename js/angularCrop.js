@@ -14,23 +14,6 @@
                 controller: function ($scope, $element) {
                     var stop = false;
                     var api = {
-                        getElementSize: function (lt, rb) {
-                            var width = (rb.x - lt.x) - 10, height = (rb.y - lt.y) - 10, top = lt.y, left = lt.x;
-                            if (width < 0) {
-                                width = width * (-1) - 25;
-                                left = left - width;
-                            }
-                            if (height < 0) {
-                                height = height * (-1) - 25;
-                                top = top - height;
-                            }
-                            return {
-                                width: width,
-                                height: height,
-                                top: top,
-                                left: left
-                            };
-                        },
                         scopeUpdate: function () {
                             $rootScope.$$phase || $rootScope.$digest();
                         },
