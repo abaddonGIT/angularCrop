@@ -97,14 +97,16 @@
                     if (point.height < minSizes.height) {
                         point.height = minSizes.height;
                     }
-                    an.extend(scope.area, point);
+                    //an.extend(scope.area, point);
                     if (cropElementSize === 'true') {//Смотрим откуда получать размеры элемента
                         scope.blockSize = blockSize = {width: elem[0].clientWidth, height: elem[0].clientHeight};
+                        an.extend(scope.area, point);
                         startNewArea();
                     } else {
                         scope.$watch('cropWidth', function (value) {
                             if (value) {
                                 scope.blockSize = blockSize = {width: value, height: scope.cropHeight || elem[0].clientHeight};
+                                an.extend(scope.area, point);
                                 startNewArea();
                             }
                         });
