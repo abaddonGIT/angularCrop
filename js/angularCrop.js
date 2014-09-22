@@ -1,6 +1,7 @@
 /**
  * Created by abaddon on 20.06.14.
  */
+/*global angular, window, document*/
 (function (w, d, an) {
     var crop = angular.module("angularCrop", []).
         directive('ngInitCrop', ["$rootScope", function ($rootScope) {
